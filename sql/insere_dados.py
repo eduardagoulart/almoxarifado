@@ -9,9 +9,7 @@ cursor.execute("""INSERT INTO RECEPTACULO VALUES('caça', 2, 03, 10)""")
 cursor.execute("""INSERT INTO RECEPTACULO VALUES('pesca', 4, 04, 35)""")
 cursor.execute("""INSERT INTO RECEPTACULO VALUES('chave', 5, 05, 43)""")
 
-cursor.execute(
-    """INSERT INTO PEÇA VALUES(12345, 01, 'rosca', 'Eduarda', 1, 'Distribuição', 01, 'parafusos')"""
-)
+cursor.execute("""INSERT INTO PEÇA VALUES(12345, 01, 'rosca', 'Eduarda', 1, 'Distribuição', 01, 'parafusos')""")
 
 cursor.execute(
     """

@@ -5,12 +5,7 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def hello_word():
-    return 'ola galera'
-
-
-@app.route('/hello/')
-@app.route('/hello/<name>')
+@app.route('/<name>')
 def hello(name=None):
     return render_template('index.html', name=name)
 
