@@ -24,15 +24,25 @@ def hello():
     return render_template('teste.html', pecas=pecas)'''
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     with sqlite3.connect("sql/almoxarifado.db") as con:
         cur = con.cursor()
         x = cur.execute("SELECT * from RECEPTACULO")
         rows = x.fetchall()
         rec = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
+        print(request.method)
+        if request.method == 'POST':
+            print("OI")
+            with sqlite3.connect('sql/almoxarifado.db') as con:
+                cur = con.cursor()
+                #cur.execute(
+                #    f"DELETE FROM RECEPTACULO WHERE tipe_peças='{request.form['tipo']}'")
+                print('oh nois aqui')
+                return redirect(url_for('index'))
         con.commit()
-        return render_template('index.html', rec=rec)
+
+    return render_template('index.html', rec=rec)
 
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -58,9 +68,16 @@ def add():
     return render_template('add.html')
 
 
-@app.route('/remove')
-def remove():
-    pass
+@app.route('/delete', methods=['GET', 'POST'])
+def delete():
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            cur = con.cursor()
+            cur.execute(
+                f"DELETE FROM RECEPTACULO WHERE tipe_peças='{request.form['tipo']}'")
+            con.commit()
+            return redirect(url_for('index'))
+    return render_template('delete.html')
 
 
 @app.route('/update', methods=['GET', 'POST'])

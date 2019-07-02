@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<form action="{{ url_for('delete') }}" method="post">
+    <label for="tipo">Tipo:</label>
+    <input type="text" name="tipo" value="{{ request.form.tipo }}"><br>
+    <button type="submit" class="registerbtn">Salvar</button>
+
+</form>
+
+{% endblock %}
