@@ -43,7 +43,6 @@ def add():
             corredor = request.form['corredor']
             ordem = request.form['ordem']
             qtd = request.form['qtd']
-            print("ENTRA AQUI")
             if not tipo or not corredor or not ordem or not qtd:
                 flash("Por favor preencha todos os campos")
                 return redirect(url_for('index'))
@@ -57,6 +56,33 @@ def add():
                 return redirect(url_for('index'))
 
     return render_template('add.html')
+
+
+@app.route('/remove')
+def remove():
+    pass
+
+
+@app.route('/update', methods=['GET', 'POST'])
+def update():
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            tipo = request.form['tipo']
+            corredor = request.form['corredor']
+            ordem = request.form['ordem']
+            qtd = request.form['qtd']
+            if not tipo or not corredor or not ordem or not qtd:
+                flash("Por favor preencha todos os campos")
+                return redirect(url_for('index'))
+            else:
+                cur = con.cursor()
+                cur.execute(
+                    f"UPDATE RECEPTACULO set corredor = {corredor}, ordem={ordem}, quantidade_peças={qtd} WHERE tipe_peças='{tipo}'")
+                con.commit()
+                flash("Novo valor editado com sucesso!!")
+                return redirect(url_for('index'))
+
+    return render_template('update.html')
 
 
 # def connet_db():
