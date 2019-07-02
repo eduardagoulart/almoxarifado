@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% block content %}
+<form action="POST">
+    <label for="tipo">Tipo:</label>
+    <input type="text" name="tipo" value="{{ request.form.tipo }}"><br>
+
+    <label for="corredor">Corredor</label>
+    <input type="text" name="corredor" value="{{ request.form.corredor }}"><br>
+
+    <label for="ordem">Ordem Compra</label>
+    <input type="text" name="ordem" value="{{ request.form.ordem }}"><br>
+
+    <label for="qtd">Quantidade de peças</label>
+    <input type="text" name="qtd" value="{{ request.form.qtd }}"><br>
+    <button type="submit" class="registerbtn">Salvar</button>
+</form>
+{% endblock %}

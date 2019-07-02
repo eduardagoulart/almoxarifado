@@ -10,8 +10,8 @@ conn = sqlite3.connect('sql/almoxarifado.db')
 
 # cursor = conn.cursor()
 
-#cur = cursor.execute("SELECT * from RECEPTACULO")
-#print(cur.fetchall())
+# cur = cursor.execute("SELECT * from RECEPTACULO")
+# print(cur.fetchall())
 
 
 '''@app.route('/')
@@ -24,17 +24,38 @@ def hello():
     return render_template('teste.html', pecas=pecas)'''
 
 
-@app.route('/teste')
-def main():
+@app.route('/')
+def index():
     with sqlite3.connect("sql/almoxarifado.db") as con:
         cur = con.cursor()
         x = cur.execute("SELECT * from RECEPTACULO")
         rows = x.fetchall()
         rec = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
-        print(rec)
         con.commit()
         return render_template('index.html', rec=rec)
 
+
+@app.route('/add', methods=['POST'])
+def update():
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.bd') as con:
+            tipo = request.form['tipo']
+            corredor = request.form['corredor']
+            ordem = request.form['ordem']
+            qtd = request.form['qtd']
+            if not tipo or not corredor or not ordem or not qtd:
+                flash("Por favor preencha todos os campos")
+                return redirect(url_for('index'))
+            else:
+                cur = con.cursor()
+                cur.execute("INSERT INTO RECEPTACULO (tipo, corredor, ordem, qtd) values (?, ?, ?, ?)",
+                            [request.form['tipo'], request.form['corredor'], request.form['ordem'],
+                             request.form['qtd']])
+                con.commit()
+                con.close()
+                # flash("Novo valor adicionado com sucesso!!")
+                # return redirect(url_for('index'))
+    return render_template('add.html')
 
 # def connet_db():
 #     return sqlite3.connect(app.config['DATABASE'])
