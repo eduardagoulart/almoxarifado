@@ -28,13 +28,13 @@ def hello():
 def main():
     with sqlite3.connect("sql/almoxarifado.db") as con:
         cur = con.cursor()
-        x = cur.execute("SELECT * from RECEPTACULO where quantidade_peças>30")
+        x = cur.execute("SELECT * from RECEPTACULO")
         rows = x.fetchall()
         rec = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
         print(rec)
         con.commit()
         # msg = "Done"
-        return render_template('teste.html', rec=rec)
+        return render_template('index.html', rec=rec)
 
 
 # def connet_db():
