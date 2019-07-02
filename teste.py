@@ -3,8 +3,8 @@ import sqlite3
 
 # DATABASE = 'sql/almoxarifado.db'
 app = Flask(__name__)
-# app.config.from_object(__name__)
-
+SECRET_KEY = 'tp_bd'
+app.config.from_object(__name__)
 
 conn = sqlite3.connect('sql/almoxarifado.db')
 
@@ -35,27 +35,29 @@ def index():
         return render_template('index.html', rec=rec)
 
 
-@app.route('/add', methods=['POST'])
-def update():
+@app.route('/add', methods=['GET', 'POST'])
+def add():
     if request.method == 'POST':
-        with sqlite3.connect('sql/almoxarifado.bd') as con:
+        with sqlite3.connect('sql/almoxarifado.db') as con:
             tipo = request.form['tipo']
             corredor = request.form['corredor']
             ordem = request.form['ordem']
             qtd = request.form['qtd']
+            print("ENTRA AQUI")
             if not tipo or not corredor or not ordem or not qtd:
                 flash("Por favor preencha todos os campos")
                 return redirect(url_for('index'))
             else:
                 cur = con.cursor()
-                cur.execute("INSERT INTO RECEPTACULO (tipo, corredor, ordem, qtd) values (?, ?, ?, ?)",
-                            [request.form['tipo'], request.form['corredor'], request.form['ordem'],
-                             request.form['qtd']])
+                cur.execute(
+                    "INSERT INTO RECEPTACULO (tipe_peças, corredor, ordem, quantidade_peças) values (?, ?, ?, ?)",
+                    [tipo, corredor, ordem, qtd])
                 con.commit()
-                con.close()
-                # flash("Novo valor adicionado com sucesso!!")
-                # return redirect(url_for('index'))
+                flash("Novo valor adicionado com sucesso!!")
+                return redirect(url_for('index'))
+
     return render_template('add.html')
+
 
 # def connet_db():
 #     return sqlite3.connect(app.config['DATABASE'])
