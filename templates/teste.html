@@ -2,9 +2,10 @@
   <body>
     {% block content %}
     <h1>OI</h1>
-    {% for p in pecas %}
+    {% for p in rec %}
         <p>OPA</p>
         <p>{{ p.upc }}</p>
+        <p>{{ p.n }}</p>
     {% endfor %}
     {% endblock %}
   </body>
