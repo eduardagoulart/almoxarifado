@@ -31,15 +31,6 @@ def index():
         x = cur.execute("SELECT * from RECEPTACULO")
         rows = x.fetchall()
         rec = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
-        print(request.method)
-        if request.method == 'POST':
-            print("OI")
-            with sqlite3.connect('sql/almoxarifado.db') as con:
-                cur = con.cursor()
-                #cur.execute(
-                #    f"DELETE FROM RECEPTACULO WHERE tipe_peças='{request.form['tipo']}'")
-                print('oh nois aqui')
-                return redirect(url_for('index'))
         con.commit()
 
     return render_template('index.html', rec=rec)
@@ -100,6 +91,43 @@ def update():
                 return redirect(url_for('index'))
 
     return render_template('update.html')
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            tipo = request.form['tipo']
+            corredor = request.form['corredor']
+            ordem = request.form['ordem']
+            qtd = request.form['qtd']
+            print('entra aqui')
+            values = ""
+            if tipo:
+                values += f"tipe_peças='{tipo}'"
+            if corredor:
+                if tipo:
+                    values += f"AND corredor={corredor}"
+                else:
+                    values += f"corredor={corredor}"
+            if ordem:
+                if tipo or corredor:
+                    values += f"AND ordem={ordem}"
+                else:
+                    values += f"ordem={ordem}"
+            if qtd:
+                if tipo or corredor or ordem:
+                    values += f"AND quantidade_peças={qtd}"
+                else:
+                    values += f"quantidade_peças={qtd}"
+
+            cur = con.cursor()
+            x = cur.execute(f"SELECT * FROM RECEPTACULO WHERE {values}")
+            rows = x.fetchall()
+            values = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
+            print(values)
+            return render_template('result_search.html', values=values)
+    return render_template('search.html')
 
 
 # def connet_db():

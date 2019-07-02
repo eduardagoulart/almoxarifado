@@ -227,11 +227,13 @@
 	}
 
 
+
     </style>
     <script type="text/javascript">
 $(document).ready(function(){
 	$('[data-toggle="tooltip"]').tooltip();
 });
+
 
 
     </script>
@@ -254,23 +256,10 @@ $(document).ready(function(){
         <div class="table-filter">
             <div class="row">
                 <div class="col-sm-9">
-                    <button type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
-                    <div class="filter-group">
-                        <label>Name</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="filter-group">
-                        <label>Location</label>
-                        <select class="form-control">
-                            <option>All</option>
-                            <option>Berlin</option>
-                            <option>London</option>
-                            <option>Madrid</option>
-                            <option>New York</option>
-                            <option>Paris</option>
-                        </select>
-                    </div>
                     <a href="{{ url_for('add') }}" class="btn btn-primary"><i class="material-icons">add</i></a>
+                    <a href="{{ url_for('delete') }}" class="btn btn-primary"><i class="material-icons">delete</i></a>
+                    <a href="{{ url_for('update') }}" class="btn btn-primary"><i class="material-icons">edit</i></a>
+                    <a href="{{ url_for('search') }}" class="btn btn-primary"><i class="material-icons">search</i></a>
                 </div>
             </div>
         </div>
@@ -290,10 +279,6 @@ $(document).ready(function(){
                 <td>{{p.corredor}}</td>
                 <td>{{ p.ordem }}</td>
                 <td>{{ p.qtd }}</td>
-                <td>
-                    <a href="{{ url_for('update') }}" class="btn btn-secundary"><i class="material-icons">edit</i></a>
-                    <a href="{{ url_for('delete') }}" class="btn btn-secundary"><i class="material-icons">delete</i></a>
-                </td>
             </tr>
             {% endfor %}
             </tbody>
