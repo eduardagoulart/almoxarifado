@@ -33,7 +33,6 @@ def main():
         rec = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
         print(rec)
         con.commit()
-        # msg = "Done"
         return render_template('index.html', rec=rec)
 
 
