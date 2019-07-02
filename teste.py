@@ -27,16 +27,10 @@ def hello():
 @app.route('/teste')
 def main():
     with sqlite3.connect("sql/almoxarifado.db") as con:
-        # name = "bob"
         cur = con.cursor()
-        x = cur.execute("SELECT * from RECEPTACULO")
-        print(x.fetchall())
+        x = cur.execute("SELECT * from RECEPTACULO where quantidade_peças>30")
         rows = x.fetchall()
-        print(type(x.fetchall()))
-        for i in rows:
-            print('ta entrando aqui')
-            print(f'i: {i}')
-        rec = [dict(upc=row[0], n=row[1]) for row in x.fetchall()]
+        rec = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
         print(rec)
         con.commit()
         # msg = "Done"
