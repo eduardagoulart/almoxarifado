@@ -304,9 +304,7 @@ $(document).ready(function(){
 
         <div class="table-filter">
             <div class="row">
-                <div class="col-sm-3">
-                    <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
-                </div>
+
                 <div class="col-sm-9">
                     <a href="{{ url_for('add') }}" class="btn btn-primary"><i class="material-icons">add</i></a>
                     <a href="{{ url_for('delete') }}" class="btn btn-primary"><i class="material-icons">delete</i></a>
@@ -318,6 +316,7 @@ $(document).ready(function(){
                             <a href="{{ url_for('search') }}">Diga o que precisa</a>
                             <a href="{{ url_for('pesquisa_aninhada') }}">Descrição peças</a>
                             <a href="{{ url_for('pesquisa_join') }}">Localização e UPC</a>
+                            <a href="{{ url_for('pesquisa_agregacao_rec') }}">Peças por receptáculo</a>
                         </div>
                     </div>
                 </div>

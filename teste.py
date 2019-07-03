@@ -12,7 +12,7 @@ app.config.from_object(__name__)
 conn = sqlite3.connect('sql/almoxarifado.db')
 
 
-@app.route('/', methods=['GET', 'POST'])
+'''@app.route('/', methods=['GET', 'POST'])
 def login():
     error = None
     status_code = 200
@@ -35,16 +35,16 @@ def logout():
 
 def login_required(test):
     @wraps(test)
-    def wrap(*args, **kwards):
+    def wrap(*args, **kwargs):
         if 'logged_in' in session:
-            return test(*args, **kwards)
+            return test(*args, **kwargs)
         else:
             return redirect(url_for('login'))
 
-    return wrap
+    return wrap'''
 
 
-@app.route('/receptaculo', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     with sqlite3.connect("sql/almoxarifado.db") as con:
         cur = con.cursor()
@@ -57,7 +57,7 @@ def index():
 
 
 @app.route('/add', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def add():
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
@@ -81,7 +81,7 @@ def add():
 
 
 @app.route('/delete', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def delete():
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
@@ -94,7 +94,7 @@ def delete():
 
 
 @app.route('/update', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def update():
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
@@ -186,6 +186,17 @@ def pesquisa_agregacao():
         rows = x.fetchall()
         values = [dict(value=row[0], nome=row[1]) for row in rows]
     return render_template('result_agregacao.html', values=values)
+
+
+@app.route('/agregacao_rec')
+def pesquisa_agregacao_rec():
+    with sqlite3.connect('sql/almoxarifado.db') as con:
+        cur = con.cursor()
+        x = cur.execute(
+            f"SELECT SUM(quantidade_peças), corredor, ordem FROM RECEPTACULO group by corredor, ordem;")
+        rows = x.fetchall()
+        values = [dict(value=row[0], corredor=row[1], ordem=row[2]) for row in rows]
+    return render_template('agregacao_rec.html', values=values)
 
 
 @app.route('/pecas')

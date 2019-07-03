@@ -14,20 +14,22 @@
             <thead>
             <tr>
                 <th>Valor</th>
-                <th>Fornecedor</th>
+                <th>Corredor</th>
+                <th>Ordem</th>
             </tr>
             </thead>
             <tbody>
             {% for p in values %}
             <tr>
                 <td>{{p.value}}</td>
-                <td>{{ p.nome }}</td>
+                <td>{{ p.corredor }}</td>
+                <td>{{ p.ordem }}</td>
 
             </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
-    <a href="{{ url_for('pecas') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
+    <a href="{{ url_for('index') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
 </div>
 {% endblock %}
