@@ -4,12 +4,35 @@ import sqlite3
 # DATABASE = 'sql/almoxarifado.db'
 app = Flask(__name__)
 SECRET_KEY = 'tp_bd'
+USERNAME = 'admin'
+PASSWORD = 'admin'
 app.config.from_object(__name__)
 
 conn = sqlite3.connect('sql/almoxarifado.db')
 
 
 @app.route('/', methods=['GET', 'POST'])
+def login():
+    error = None
+    status_code = 200
+    if request.method == 'POST':
+        if request.form['username'] != app.config['USERNAME'] or request.form['password'] != app.config['PASSWORD']:
+            error = 'Dados inválidos. Tente novamente!'
+            status_code = 401
+        else:
+            session['logged_in'] = True
+            return redirect(url_for('index'))
+    return render_template('loggin.html', error=error), status_code
+
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash("Você saiu do sistema")
+    return redirect(url_for('login'))
+
+
+@app.route('/receptaculo', methods=['GET', 'POST'])
 def index():
     with sqlite3.connect("sql/almoxarifado.db") as con:
         cur = con.cursor()
