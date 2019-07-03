@@ -24,13 +24,15 @@
                 <div class="col-sm-9">
                     <a href="{{ url_for('add_pecas') }}" class="btn btn-primary"><i class="material-icons">add</i></a>
                     <a href="{{ url_for('delete_pecas') }}" class="btn btn-primary"><i class="material-icons">delete</i></a>
-                    <a href="{{ url_for('update_pecas') }}" class="btn btn-primary"><i class="material-icons">edit</i></a>
+                    <a href="{{ url_for('update_pecas') }}" class="btn btn-primary"><i
+                            class="material-icons">edit</i></a>
                     <div class="dropdown">
                         <button class="dropdown btn btn-primary"><i class="material-icons">search</i></button>
                         <div class="dropdown-content">
                             <a href="{{ url_for('pesquisa_aninhada') }}">Descrição peças</a>
                             <a href="{{ url_for('pesquisa_join') }}">Localização e UPC</a>
                             <a href="{{ url_for('pesquisa_agregacao') }}">Fornecedor ativo</a>
+                            <a href="{{ url_for('pesquisa_info_pedido') }}">Informações sobre pedido</a>
                         </div>
                     </div>
                 </div>
@@ -66,5 +68,7 @@
         </table>
     </div>
     <a href="{{ url_for('index') }}" class="btn btn-primary">Receptáculo</a>
+    <a href="{{ url_for('view') }}" class="btn btn-primary">Relatório total</a>
+
 </div>
 {% endblock %}

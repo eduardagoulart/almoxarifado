@@ -1,0 +1,42 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h2>Tabela <b>Almoxarifado</b>Informação sobre todas as peças</h2>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Número do pedido</th>
+                <th>UPC</th>
+                <th>Número do estrado</th>
+                <th>UPC</th>
+                <th>Corredor</th>
+                <th>Ordem</th>
+                <th>Quantidade de peças</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for p in values %}
+            <tr>
+                <td>{{ p.n_pedido }}</td>
+                <td>{{ p.descricao }}</td>
+                <td>{{ p.n_estrado }}</td>
+                <td>{{ p.upc }}</td>
+                <td>{{p.corredor}}</td>
+                <td>{{ p.ordem }}</td>
+                <td>{{ p.qtd }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('pecas') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
+</div>
+{% endblock %}

@@ -76,18 +76,20 @@ def add():
     sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
-            tipo = request.form['tipo']
-            corredor = request.form['corredor']
-            ordem = request.form['ordem']
-            qtd = request.form['qtd']
-            if not tipo or not corredor or not ordem or not qtd:
+            insert = [
+                request.form['tipo'],
+                request.form['corredor'],
+                request.form['ordem'],
+                request.form['qtd'],
+            ]
+            if None in insert:
                 flash("Por favor preencha todos os campos")
                 return redirect(url_for('index'))
             else:
                 cur = con.cursor()
                 cur.execute(
                     "INSERT INTO RECEPTACULO (tipe_peças, corredor, ordem, quantidade_peças) values (?, ?, ?, ?)",
-                    [tipo, corredor, ordem, qtd])
+                    [insert[0], insert[1], insert[1], insert[2]])
                 con.commit()
                 # con.close()
                 return redirect(url_for('index'))
@@ -99,24 +101,26 @@ def add():
 @login_required
 def add_pecas():
     sqlite3.connect('sql/almoxarifado.db').close()
+    insert = [
+        request.form['upc'],
+        request.form['n_pedido'],
+        request.form['descricao'],
+        request.form['fornecedor'],
+        request.form['numero'],
+        request.form['setor_compra'],
+        request.form['n_estrado'],
+        request.form['tipo']
+    ]
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
-            upc = request.form['upc']
-            n_pedido = request.form['n_pedido']
-            fornecedor = request.form['fornecedor']
-            descricao = request.form['descricao']
-            numero = request.form['numero']
-            setor_compra = request.form['setor_compra']
-            n_estrado = request.form['n_estrado']
-            tipo = request.form['tipo']
-            if not upc or not n_pedido or not numero or not fornecedor or not descricao or not numero or not setor_compra or not n_estrado or not tipo:
+            if None in insert:
                 flash("Por favor preencha todos os campos")
                 return redirect(url_for('pecas'))
             else:
                 cur = con.cursor()
                 cur.execute(
                     "INSERT INTO PEÇA (upc, n_pedido, descricao, fornecedor, numero, setor_compra, n_estrado, tipo) values (?, ?, ?, ?, ?, ?, ?, ?)",
-                    [upc, n_pedido, descricao, fornecedor, numero, setor_compra, n_estrado, tipo])
+                    [insert[0], insert[1], insert[2], insert[2], insert[3], insert[4], insert[5], insert[6], insert[7]])
                 con.commit()
                 flash("Novo valor adicionado com sucesso!!")
                 return redirect(url_for('pecas'))
@@ -272,6 +276,7 @@ def pesquisa_join():
 
 @app.route('/agregacao')
 def pesquisa_agregacao():
+    sqlite3.connect('sql/almoxarifado.db').close()
     with sqlite3.connect('sql/almoxarifado.db') as con:
         cur = con.cursor()
         x = cur.execute(
@@ -283,6 +288,7 @@ def pesquisa_agregacao():
 
 @app.route('/agregacao_rec')
 def pesquisa_agregacao_rec():
+    sqlite3.connect('sql/almoxarifado.db').close()
     with sqlite3.connect('sql/almoxarifado.db') as con:
         cur = con.cursor()
         x = cur.execute(
@@ -290,6 +296,38 @@ def pesquisa_agregacao_rec():
         rows = x.fetchall()
         values = [dict(value=row[0], corredor=row[1], ordem=row[2]) for row in rows]
     return render_template('agregacao_rec.html', values=values)
+
+
+@app.route('/indo_pedido', methods=['GET', 'POST'])
+def pesquisa_info_pedido():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            n_pedido = request.form['n_pedido']
+            cur = con.cursor()
+            pedido = int(n_pedido)
+            x = cur.execute(
+                f"select descricao,es.n_estrado,es.upc_peca,quantidade_pecas, corredor,ordem from ESTRADO as es join (select pc.n_estrado,n_pedido,ordem,corredor,descricao from RECEPTACULO as rc join PEÇA as pc on rc.tipe_peças = pc.tipo  where n_pedido = {pedido}) as tb on es.n_estrado = tb.n_estrado; "
+            )
+            rows = x.fetchall()
+            values = [dict(descricao=row[0], n_estrado=row[1], upc=row[2], qtd=row[3], corredor=row[4], ordem=row[5])
+                      for row in rows]
+        return render_template('result_pedido.html', values=values)
+    return render_template('pedido.html')
+
+
+@app.route('/view', methods=['GET', 'POST'])
+@login_required
+def view():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    with sqlite3.connect('sql/almoxarifado.db') as con:
+        cur = con.cursor()
+        x = cur.execute(
+            f"SELECT * FROM info_pecas")
+        rows = x.fetchall()
+        values = [dict(n_pedido=row[0], descricao=row[1], n_estrado=row[2], upc=row[3], qtd=row[4], corredor=row[5],
+                       ordem=row[6]) for row in rows]
+    return render_template('view.html', values=values)
 
 
 # def connet_db():
