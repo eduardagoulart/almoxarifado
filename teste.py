@@ -129,6 +129,9 @@ def search():
             return render_template('result_search.html', values=values)
     return render_template('search.html')
 
+@app.route('/pecas')
+def pecas():
+    return render_template('pecas.html')
 
 # def connet_db():
 #     return sqlite3.connect(app.config['DATABASE'])

@@ -1,19 +1,34 @@
 {% extends 'index.html' %}
 
 {% block content %}
-<form action="{{ url_for('add') }}"  method="post">
-    <label for="tipo">Tipo:</label>
-    <input type="text" name="tipo" value="{{ request.form.tipo }}"><br>
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h2>Tabela <b>Almoxarifado</b> Receptáculo: Inserção</h2>
+                </div>
+                <!--<div class="col-sm-8">
+                    <a href="#" class="btn btn-primary"><i class="material-icons">&#xE863;</i> <span>Refresh List</span></a>
+                    <a href="#" class="btn btn-info"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>
+                </div>-->
+            </div>
+        </div>
+        <form action="{{ url_for('add') }}" method="post">
+            <label for="tipo">Tipo:</label>
+            <input type="text" name="tipo" value="{{ request.form.tipo }}"><br>
 
-    <label for="corredor">Corredor</label>
-    <input type="text" name="corredor" value="{{ request.form.corredor }}"><br>
+            <label for="corredor">Corredor</label>
+            <input type="text" name="corredor" value="{{ request.form.corredor }}"><br>
 
-    <label for="ordem">Ordem Compra</label>
-    <input type="text" name="ordem" value="{{ request.form.ordem }}"><br>
+            <label for="ordem">Ordem Compra</label>
+            <input type="text" name="ordem" value="{{ request.form.ordem }}"><br>
 
-    <label for="qtd">Quantidade de peças</label>
-    <input type="text" name="qtd" value="{{ request.form.qtd }}"><br>
-    <button type="submit" class="registerbtn">Salvar</button>
-</form>
+            <label for="qtd">Quantidade de peças</label>
+            <input type="text" name="qtd" value="{{ request.form.qtd }}"><br>
+            <button type="submit" class="registerbtn">Salvar</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}
