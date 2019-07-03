@@ -8,21 +8,6 @@ app.config.from_object(__name__)
 
 conn = sqlite3.connect('sql/almoxarifado.db')
 
-# cursor = conn.cursor()
-
-# cur = cursor.execute("SELECT * from RECEPTACULO")
-# print(cur.fetchall())
-
-
-'''@app.route('/')
-def hello():
-    cur = cursor.execute("SELECT * from RECEPTACULO")
-    print(cur.fetchall())
-    pecas = [dict(upc=row[0]) for row in cur.fetchall()]
-    print(pecas)
-    # g.db.close()
-    return render_template('teste.html', pecas=pecas)'''
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -125,13 +110,22 @@ def search():
             x = cur.execute(f"SELECT * FROM RECEPTACULO WHERE {values}")
             rows = x.fetchall()
             values = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
-            print(values)
             return render_template('result_search.html', values=values)
     return render_template('search.html')
 
+
 @app.route('/pecas')
 def pecas():
-    return render_template('pecas.html')
+    with sqlite3.connect("sql/almoxarifado.db") as con:
+        cur = con.cursor()
+        x = cur.execute("SELECT * from PEÇA")
+        rows = x.fetchall()
+        pecas = [dict(upc=row[0], n=row[1], descricao=row[2], fornecedor=row[3], numero=row[4], setor_compra=row[5],
+                      estrado=row[6], tipo=row[7]) for row in rows]
+        print(pecas)
+        con.commit()
+    return render_template('pecas.html', pecas=pecas)
+
 
 # def connet_db():
 #     return sqlite3.connect(app.config['DATABASE'])
