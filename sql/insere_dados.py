@@ -49,4 +49,25 @@ cursor.execute(
     """INSERT INTO PEÇA VALUES(12354, 10, 'chave inglesa', 'Eduarda', 2, 'Distribuição', 03, 'chave')"""
 )
 
+cursor.execute(
+    """INSERT INTO ESTRADO VALUES(01, 12345, 25)"""
+)
+
+cursor.execute(
+    """INSERT INTO ESTRADO VALUES(02, 12346, 15)"""
+)
+
+cursor.execute(
+    """INSERT INTO ESTRADO VALUES(03, 12347, 18)"""
+)
+
+cursor.execute(
+    """INSERT INTO ESTRADO VALUES(04, 12348, 35)"""
+)
+
+cursor.execute(
+    """INSERT INTO ESTRADO VALUES(05, 12349, 20)"""
+)
+
+
 conn.commit()

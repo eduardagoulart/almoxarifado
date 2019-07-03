@@ -11,5 +11,6 @@ cursor.execute(
      """CREATE TABLE RECEPTACULO (tipe_peças VARCHAR(45) PRIMARY KEY, corredor INT, ordem INT, quantidade_peças INT)"""
 )
 
-"SELECT corredor, ordem FROM RECEPTACULO WHERE quantidade_peças = " \
-"(SELECT quanditade_peças FROM RECEPTACULO WHERE quantidade_peças > x)"
+cursor.execute(
+    """CREATE TABLE ESTRADO (n_estrado INT PRIMARY KEY, upc_peca INT, quantidade_pecas INT)"""
+)

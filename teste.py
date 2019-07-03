@@ -157,7 +157,6 @@ def pesquisa_aninhada():
         with sqlite3.connect('sql/almoxarifado.db') as con:
             qtd = request.form['qtd']
             cur = con.cursor()
-            print(qtd, type(qtd))
             e = int(qtd)
             x = cur.execute(
                 f"SELECT DISTINCT descricao FROM PEÇA WHERE tipo = (SELECT tipe_peças FROM RECEPTACULO WHERE quantidade_peças > {e})")
@@ -165,6 +164,28 @@ def pesquisa_aninhada():
             values = [dict(descricao=row[0]) for row in rows]
         return render_template('result_aninhada.html', values=values)
     return render_template('aninhada.html')
+
+
+@app.route('/join')
+def pesquisa_join():
+    with sqlite3.connect('sql/almoxarifado.db') as con:
+        cur = con.cursor()
+        x = cur.execute(
+            f"SELECT corredor, ordem, UPC FROM PEÇA JOIN RECEPTACULO on tipo=tipe_peças")
+        rows = x.fetchall()
+        values = [dict(corredor=row[0], ordem=row[1], upc=row[2]) for row in rows]
+    return render_template('result_join.html', values=values)
+
+
+@app.route('/agregacao')
+def pesquisa_agregacao():
+    with sqlite3.connect('sql/almoxarifado.db') as con:
+        cur = con.cursor()
+        x = cur.execute(
+            f"SELECT COUNT(*), fornecedor FROM PEÇA group by fornecedor;")
+        rows = x.fetchall()
+        values = [dict(value=row[0], nome=row[1]) for row in rows]
+    return render_template('result_agregacao.html', values=values)
 
 
 @app.route('/pecas')
