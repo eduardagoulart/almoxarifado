@@ -1,0 +1,32 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h2>Tabela <b>Almoxarifado</b> Peças: Inserção</h2>
+                </div>
+            </div>
+        </div>
+        <form action="{{ url_for('update_pecas_pedido') }}" method="post">
+            <label for="upc">UPC</label>
+            <input type="text" name="upc" value="{{ request.form.upc }}"><br>
+
+            <label for="n_pedido">Número Pedido</label>
+            <input type="text" name="n_pedido" value="{{ request.form.n_pedido }}"><br>
+
+            <label for="n_estrado">Número Estrado</label>
+            <input type="text" name="n_estrado" value="{{ request.form.n_estrado }}"><br>
+
+            <label for="tipo">Tipo</label>
+            <input type="text" name="tipo" value="{{ request.form.tipo }}"><br>
+
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+    </div>
+    <a href="{{ url_for('pecas_pedido') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
+</div>
+
+{% endblock %}

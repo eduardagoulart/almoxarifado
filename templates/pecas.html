@@ -42,33 +42,28 @@
             <thead>
             <tr>
                 <th>UPC</th>
-                <th>Nº do pedido</th>
                 <th>Descrição</th>
                 <th>Fornecedor</th>
                 <th>Número</th>
                 <th>Setor de compra</th>
-                <th>Nº do estrado</th>
-                <th>Tipo</th>
             </tr>
             </thead>
             <tbody>
             {% for p in pecas %}
             <tr>
                 <td>{{ p.upc }}</td>
-                <td>{{ p.n }}</td>
                 <td>{{ p.descricao }}</td>
                 <td>{{ p.fornecedor }}</td>
                 <td>{{ p.numero }}</td>
                 <td>{{ p.setor_compra }}</td>
-                <td>{{ p.estrado }}</td>
-                <td>{{ p.tipo }}</td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
     <a href="{{ url_for('index') }}" class="btn btn-primary">Receptáculo</a>
-    <a href="{{ url_for('view') }}" class="btn btn-primary">Relatório total</a>
+    <a href="{{ url_for('pecas_pedido') }}" class="btn btn-primary">Peças Pedido</a>
+    <a href="{{ url_for('view_pecas') }}" class="btn btn-primary">Relatório Peças</a>
 
 </div>
 {% endblock %}

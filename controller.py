@@ -63,10 +63,22 @@ def pecas():
         cur = con.cursor()
         x = cur.execute("SELECT * from PEÇA")
         rows = x.fetchall()
-        pecas = [dict(upc=row[0], n=row[1], descricao=row[2], fornecedor=row[3], numero=row[4], setor_compra=row[5],
-                      estrado=row[6], tipo=row[7]) for row in rows]
+        pecas = [dict(upc=row[0], descricao=row[1], fornecedor=row[2], numero=row[3], setor_compra=row[4]) for row in
+                 rows]
         con.commit()
     return render_template('pecas.html', pecas=pecas)
+
+
+@app.route('/pecas_pedido')
+def pecas_pedido():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    with sqlite3.connect("sql/almoxarifado.db") as con:
+        cur = con.cursor()
+        x = cur.execute("SELECT * from PECA_PEDIDO")
+        rows = x.fetchall()
+        peca = [dict(upc=row[0], n_pedido=row[1], n_estrado=row[2], tipo=row[3]) for row in rows]
+        con.commit()
+    return render_template('pecas_pedido.html', peca=peca)
 
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -100,31 +112,53 @@ def add():
 @login_required
 def add_pecas():
     sqlite3.connect('sql/almoxarifado.db').close()
-    insert = [
-        request.form['upc'],
-        request.form['n_pedido'],
-        request.form['descricao'],
-        request.form['fornecedor'],
-        request.form['numero'],
-        request.form['setor_compra'],
-        request.form['n_estrado'],
-        request.form['tipo']
-    ]
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
+            insert = [
+                request.form['upc'],
+                request.form['descricao'],
+                request.form['fornecedor'],
+                request.form['numero'],
+                request.form['setor_compra'],
+            ]
             if None in insert:
                 flash("Por favor preencha todos os campos")
                 return redirect(url_for('pecas'))
             else:
                 cur = con.cursor()
                 cur.execute(
-                    "INSERT INTO PEÇA (upc, n_pedido, descricao, fornecedor, numero, setor_compra, n_estrado, tipo) values (?, ?, ?, ?, ?, ?, ?, ?)",
-                    [insert[0], insert[1], insert[2], insert[2], insert[3], insert[4], insert[5], insert[6], insert[7]])
+                    "INSERT INTO PEÇA (upc, descricao, fornecedor, numero, setor_compra) values (?, ?, ?, ?, ?)",
+                    [insert[0], insert[1], insert[2], insert[3], insert[4]])
                 con.commit()
-                flash("Novo valor adicionado com sucesso!!")
                 return redirect(url_for('pecas'))
 
     return render_template('add_pecas.html')
+
+
+@app.route('/add_pecas_pedido', methods=['GET', 'POST'])
+@login_required
+def add_pecas_pedido():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            insert = [
+                request.form['upc'],
+                request.form['n_pedido'],
+                request.form['n_estrado'],
+                request.form['tipo'],
+            ]
+            if None in insert:
+                flash("Por favor preencha todos os campos")
+                return redirect(url_for('pecas_pedido'))
+            else:
+                cur = con.cursor()
+                cur.execute(
+                    "INSERT INTO PECA_PEDIDO (upc, n_pedido, n_estrado, tipo) values (?, ?, ?, ?)",
+                    [insert[0], insert[1], insert[2], insert[3]])
+                con.commit()
+                return redirect(url_for('pecas_pedido'))
+
+    return render_template('add_pecas_pedido.html')
 
 
 @app.route('/delete', methods=['GET', 'POST'])
@@ -153,6 +187,20 @@ def delete_pecas():
             con.commit()
             return redirect(url_for('pecas'))
     return render_template('delete_peca.html')
+
+
+@app.route('/delete_pecas_pedido', methods=['GET', 'POST'])
+@login_required
+def delete_pecas_pedido():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            cur = con.cursor()
+            cur.execute(
+                f"DELETE FROM PECA_PEDIDO WHERE upc='{request.form['upc']}'")
+            con.commit()
+            return redirect(url_for('pecas_pedido'))
+    return render_template('delete_pecas_pedido.html')
 
 
 @app.route('/update', methods=['GET', 'POST'])
@@ -185,25 +233,49 @@ def update_pecas():
     sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
-            upc = request.form['upc']
-            n_pedido = request.form['n_pedido']
-            desc = request.form['descricao']
-            fornecedor = request.form['fornecedor']
-            numero = request.form['numero']
-            setor_compra = request.form['setor_compra']
-            n_estrado = request.form['n_estrado']
-            tipo = request.form['tipo']
-            if not tipo or not upc or not n_pedido or not desc or not fornecedor or not numero or not setor_compra or not n_estrado:
+            up = [
+                request.form['upc'],
+                request.form['descricao'],
+                request.form['fornecedor'],
+                request.form['numero'],
+                request.form['setor_compra'],
+            ]
+            if None in up:
                 flash("Por favor preencha todos os campos")
                 return redirect(url_for('pecas'))
             else:
                 cur = con.cursor()
                 cur.execute(
-                    f"UPDATE PEÇA set n_pedido={n_pedido}, descricao='{desc}', fornecedor='{fornecedor}', numero={numero}, setor_compra='{setor_compra}', n_estrado={n_estrado}, tipo='{tipo}'  WHERE upc={upc}")
+                    f"UPDATE PEÇA set descricao='{up[1]}', fornecedor='{up[2]}', numero={up[3]}, setor_compra='{up[4]}' WHERE upc={up[0]}")
                 con.commit()
                 return redirect(url_for('pecas'))
 
     return render_template('update_pecas.html')
+
+
+@app.route('/update_pecas_pedido', methods=['GET', 'POST'])
+@login_required
+def update_pecas_pedido():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            up = [
+                request.form['upc'],
+                request.form['n_pedido'],
+                request.form['n_estrado'],
+                request.form['tipo']
+            ]
+            if None in up:
+                flash("Por favor preencha todos os campos")
+                return redirect(url_for('pecas_pedido'))
+            else:
+                cur = con.cursor()
+                cur.execute(
+                    f"UPDATE PECA_PEDIDO set n_pedido={up[1]}, n_estrado={up[2]}, tipo='{up[3]}' WHERE upc={up[0]}")
+                con.commit()
+                return redirect(url_for('pecas_pedido'))
+
+    return render_template('update_pecas_pedido.html')
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -251,9 +323,9 @@ def pesquisa_aninhada():
             cur = con.cursor()
             e = int(qtd)
             x = cur.execute(
-                f"SELECT DISTINCT descricao FROM PEÇA WHERE tipo in (SELECT tipe_peças FROM RECEPTACULO WHERE quantidade_peças > {e});")
+                f"SELECT p.upc, p.fornecedor, pp.tipo FROM PEÇA as p JOIN PECA_PEDIDO as pp on pp.upc = p.upc WHERE pp.tipo in (SELECT rec.tipe_peças FROM RECEPTACULO as rec WHERE quantidade_peças > {e})")
             rows = x.fetchall()
-            values = [dict(descricao=row[0]) for row in rows]
+            values = [dict(upc=row[0], fornecedor=row[1], tipo=row[2]) for row in rows]
         return render_template('result_aninhada.html', values=values)
     return render_template('aninhada.html')
 
@@ -264,7 +336,7 @@ def pesquisa_join():
     with sqlite3.connect('sql/almoxarifado.db') as con:
         cur = con.cursor()
         x = cur.execute(
-            f"SELECT corredor, ordem, UPC FROM PEÇA JOIN RECEPTACULO on tipo=tipe_peças")
+            f"SELECT corredor, ordem, UPC FROM PECA_PEDIDO JOIN RECEPTACULO on tipo=tipe_peças")
         rows = x.fetchall()
         values = [dict(corredor=row[0], ordem=row[1], upc=row[2]) for row in rows]
     return render_template('result_join.html', values=values)
@@ -303,10 +375,10 @@ def pesquisa_info_pedido():
             cur = con.cursor()
             pedido = int(n_pedido)
             x = cur.execute(
-                f"select descricao,es.n_estrado,es.upc_peca,quantidade_pecas, corredor,ordem from ESTRADO as es join (select pc.n_estrado,n_pedido,ordem,corredor,descricao from RECEPTACULO as rc join PEÇA as pc on rc.tipe_peças = pc.tipo  where n_pedido = {pedido}) as tb on es.n_estrado = tb.n_estrado; "
+                f"select es.n_estrado,es.upc_peca,quantidade_pecas, corredor,ordem from ESTRADO as es join (select pc.n_estrado,n_pedido,ordem,corredor from RECEPTACULO as rc join PECA_PEDIDO as pc on rc.tipe_peças = pc.tipo where n_pedido = {pedido}) as tb on es.n_estrado = tb.n_estrado;"
             )
             rows = x.fetchall()
-            values = [dict(descricao=row[0], n_estrado=row[1], upc=row[2], qtd=row[3], corredor=row[4], ordem=row[5])
+            values = [dict(n_estrado=row[0], upc=row[1], qtd=row[2], corredor=row[3], ordem=row[4])
                       for row in rows]
         return render_template('result_pedido.html', values=values)
     return render_template('pedido.html')
@@ -319,11 +391,25 @@ def view():
     with sqlite3.connect('sql/almoxarifado.db') as con:
         cur = con.cursor()
         x = cur.execute(
+            f"SELECT * FROM info_rec")
+        rows = x.fetchall()
+        values = [dict(n_pedido=row[0], n_estrado=row[1], upc=row[2], qtd=row[3], corredor=row[4],
+                       ordem=row[5]) for row in rows]
+    return render_template('view.html', values=values)
+
+
+@app.route('/view_pecas', methods=['GET', 'POST'])
+@login_required
+def view_pecas():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    with sqlite3.connect('sql/almoxarifado.db') as con:
+        cur = con.cursor()
+        x = cur.execute(
             f"SELECT * FROM info_pecas")
         rows = x.fetchall()
-        values = [dict(n_pedido=row[0], descricao=row[1], n_estrado=row[2], upc=row[3], qtd=row[4], corredor=row[5],
-                       ordem=row[6]) for row in rows]
-    return render_template('view.html', values=values)
+        values = [dict(upc=row[0], descricao=row[1], fornecedor=row[2], numero=row[3], setor_compra=row[4],
+                       n_pedido=row[6], n_estrado=row[7], tipo=row[8]) for row in rows]
+    return render_template('view_pecas.html', values=values)
 
 
 if __name__ == '__main__':

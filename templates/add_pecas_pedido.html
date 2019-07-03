@@ -10,21 +10,18 @@
                 </div>
             </div>
         </div>
-        <form action="{{ url_for('add_pecas') }}" method="post">
+        <form action="{{ url_for('add_pecas_pedido') }}" method="post">
             <label for="upc">UPC</label>
             <input type="text" name="upc" value="{{ request.form.upc }}"><br>
 
-            <label for="descricao">Descrição</label>
-            <input type="text" name="descricao" value="{{ request.form.descricao }}"><br>
+            <label for="n_pedido">Número Pedido</label>
+            <input type="text" name="n_pedido" value="{{ request.form.n_pedido }}"><br>
 
-            <label for="fornecedor">Fornecedor</label>
-            <input type="text" name="fornecedor" value="{{ request.form.fornecedor }}"><br>
+            <label for="n_estrado">Número Estrado</label>
+            <input type="text" name="n_estrado" value="{{ request.form.n_estrado }}"><br>
 
-            <label for="numero">Número</label>
-            <input type="text" name="numero" value="{{ request.form.numero }}"><br>
-
-            <label for="setor_compra">Setor compra</label>
-            <input type="text" name="setor_compra" value="{{ request.form.setor_compra }}"><br>
+            <label for="tipo">Tipo</label>
+            <input type="text" name="tipo" value="{{ request.form.tipo }}"><br>
 
             <button type="submit" class="btn btn-primary">Salvar</button>
         </form>
