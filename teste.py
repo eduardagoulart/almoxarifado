@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, flash, redirect, url_for, g
 import sqlite3
+from functools import wraps
 
 # DATABASE = 'sql/almoxarifado.db'
 app = Flask(__name__)
@@ -32,6 +33,17 @@ def logout():
     return redirect(url_for('login'))
 
 
+def login_required(test):
+    @wraps(test)
+    def wrap(*args, **kwards):
+        if 'logged_in' in session:
+            return test(*args, **kwards)
+        else:
+            return redirect(url_for('login'))
+
+    return wrap
+
+
 @app.route('/receptaculo', methods=['GET', 'POST'])
 def index():
     with sqlite3.connect("sql/almoxarifado.db") as con:
@@ -45,6 +57,7 @@ def index():
 
 
 @app.route('/add', methods=['GET', 'POST'])
+@login_required
 def add():
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
@@ -68,6 +81,7 @@ def add():
 
 
 @app.route('/delete', methods=['GET', 'POST'])
+@login_required
 def delete():
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
@@ -80,6 +94,7 @@ def delete():
 
 
 @app.route('/update', methods=['GET', 'POST'])
+@login_required
 def update():
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:

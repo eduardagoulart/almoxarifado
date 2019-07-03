@@ -8,10 +8,6 @@
                 <div class="col-sm-4">
                     <h2>Menu <b>Login</b></h2>
                 </div>
-                <!--<div class="col-sm-8">
-                    <a href="#" class="btn btn-primary"><i class="material-icons">&#xE863;</i> <span>Refresh List</span></a>
-                    <a href="#" class="btn btn-info"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>
-                </div>-->
             </div>
         </div>
         <form action="{{ url_for('login') }}" method="post">
@@ -21,10 +17,22 @@
             <label for="password">Senha</label>
             <input type="password" name="password" id="password" value="{{ request.form.password }}"><br>
 
-            <button type="submit" class="btn btn-secundary">Entrar</button>
+            <div class="col-sm-9">
+                <button type="submit" class="btn btn-secundary">Entrar</button>
+            </div>
         </form>
     </div>
-    <a href="{{ url_for('index') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
+
+    <div>
+        <div class="col-sm-3">
+            <a href="{{ url_for('index') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
+        </div>
+        <div class="col-sm-9">
+            <a href="{{ url_for('pecas') }}" class="btn btn-primary">Peças</a>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Receptáculo</a>
+        </div>
+
+    </div>
 </div>
 
 {% endblock %}
