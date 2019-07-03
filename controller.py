@@ -65,7 +65,6 @@ def pecas():
         rows = x.fetchall()
         pecas = [dict(upc=row[0], n=row[1], descricao=row[2], fornecedor=row[3], numero=row[4], setor_compra=row[5],
                       estrado=row[6], tipo=row[7]) for row in rows]
-        print(pecas)
         con.commit()
     return render_template('pecas.html', pecas=pecas)
 
@@ -89,7 +88,7 @@ def add():
                 cur = con.cursor()
                 cur.execute(
                     "INSERT INTO RECEPTACULO (tipe_peças, corredor, ordem, quantidade_peças) values (?, ?, ?, ?)",
-                    [insert[0], insert[1], insert[1], insert[2]])
+                    [insert[0], insert[1], insert[2], insert[3]])
                 con.commit()
                 # con.close()
                 return redirect(url_for('index'))
@@ -138,7 +137,6 @@ def delete():
             cur.execute(
                 f"DELETE FROM RECEPTACULO WHERE tipe_peças='{request.form['tipo']}'")
             con.commit()
-            con.close()
             return redirect(url_for('index'))
     return render_template('delete.html')
 
@@ -153,7 +151,6 @@ def delete_pecas():
             cur.execute(
                 f"DELETE FROM PEÇA WHERE upc='{request.form['upc']}'")
             con.commit()
-            con.close()
             return redirect(url_for('pecas'))
     return render_template('delete_peca.html')
 
@@ -177,7 +174,6 @@ def update():
                     f"UPDATE RECEPTACULO set corredor = {corredor}, ordem={ordem}, quantidade_peças={qtd} WHERE tipe_peças='{tipo}'")
                 con.commit()
                 flash("Novo valor editado com sucesso!!")
-                con.close()
                 return redirect(url_for('index'))
 
     return render_template('update.html')
@@ -224,19 +220,19 @@ def search():
                 values += f"tipe_peças='{tipo}'"
             if corredor:
                 if tipo:
-                    values += f"AND corredor={corredor}"
+                    values += f"AND corredor={int(corredor)}"
                 else:
-                    values += f"corredor={corredor}"
+                    values += f"corredor={int(corredor)}"
             if ordem:
                 if tipo or corredor:
-                    values += f"AND ordem={ordem}"
+                    values += f"AND ordem={int(ordem)}"
                 else:
-                    values += f"ordem={ordem}"
+                    values += f"ordem={int(ordem)}"
             if qtd:
                 if tipo or corredor or ordem:
-                    values += f"AND quantidade_peças={qtd}"
+                    values += f"AND quantidade_peças={int(qtd)}"
                 else:
-                    values += f"quantidade_peças={qtd}"
+                    values += f"quantidade_peças={int(qtd)}"
 
             cur = con.cursor()
             x = cur.execute(f"SELECT * FROM RECEPTACULO WHERE {values}")
@@ -255,7 +251,7 @@ def pesquisa_aninhada():
             cur = con.cursor()
             e = int(qtd)
             x = cur.execute(
-                f"SELECT DISTINCT descricao FROM PEÇA WHERE tipo = (SELECT tipe_peças FROM RECEPTACULO WHERE quantidade_peças > {e})")
+                f"SELECT DISTINCT descricao FROM PEÇA WHERE tipo in (SELECT tipe_peças FROM RECEPTACULO WHERE quantidade_peças > {e});")
             rows = x.fetchall()
             values = [dict(descricao=row[0]) for row in rows]
         return render_template('result_aninhada.html', values=values)
@@ -328,10 +324,6 @@ def view():
         values = [dict(n_pedido=row[0], descricao=row[1], n_estrado=row[2], upc=row[3], qtd=row[4], corredor=row[5],
                        ordem=row[6]) for row in rows]
     return render_template('view.html', values=values)
-
-
-# def connet_db():
-#     return sqlite3.connect(app.config['DATABASE'])
 
 
 if __name__ == '__main__':

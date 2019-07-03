@@ -8,6 +8,7 @@
                 <div class="col-sm-4">
                     <h2>Tabela <b>Almoxarifado</b> Receptáculo: Pesquisa</h2>
                 </div>
+                <p><br>Este relatório retornar a descrição das peças que possuem mais de X elementos em estoque.</p>
             </div>
         </div>
         <form action="{{ url_for('pesquisa_aninhada') }}" method="post">
@@ -16,7 +17,7 @@
             <button type="submit" class="btn btn-primary">Salvar</button>
         </form>
     </div>
-    <a href="{{ url_for('index') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
+    <a href="{{ url_for('pecas') }}" class="btn btn-primary"><i class="material-icons">arrow_back</i></a>
 </div>
 
 {% endblock %}
