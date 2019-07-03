@@ -11,7 +11,8 @@ app.config.from_object(__name__)
 
 conn = sqlite3.connect('sql/almoxarifado.db')
 
-'''@app.route('/', methods=['GET', 'POST'])
+
+@app.route('/', methods=['GET', 'POST'])
 def login():
     error = None
     status_code = 200
@@ -40,10 +41,10 @@ def login_required(test):
         else:
             return redirect(url_for('login'))
 
-    return wrap'''
+    return wrap
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/receptaculo', methods=['GET', 'POST'])
 def index():
     with sqlite3.connect("sql/almoxarifado.db") as con:
         cur = con.cursor()
@@ -51,12 +52,13 @@ def index():
         rows = x.fetchall()
         rec = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
         con.commit()
-
+    sqlite3.connect('sql/almoxarifado.db').close()
     return render_template('index.html', rec=rec)
 
 
 @app.route('/pecas')
 def pecas():
+    sqlite3.connect('sql/almoxarifado.db').close()
     with sqlite3.connect("sql/almoxarifado.db") as con:
         cur = con.cursor()
         x = cur.execute("SELECT * from PEÇA")
@@ -69,8 +71,9 @@ def pecas():
 
 
 @app.route('/add', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def add():
+    sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
             tipo = request.form['tipo']
@@ -86,32 +89,34 @@ def add():
                     "INSERT INTO RECEPTACULO (tipe_peças, corredor, ordem, quantidade_peças) values (?, ?, ?, ?)",
                     [tipo, corredor, ordem, qtd])
                 con.commit()
-                flash("Novo valor adicionado com sucesso!!")
+                # con.close()
                 return redirect(url_for('index'))
 
     return render_template('add.html')
 
 
 @app.route('/add_pecas', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def add_pecas():
+    sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
             upc = request.form['upc']
             n_pedido = request.form['n_pedido']
             fornecedor = request.form['fornecedor']
+            descricao = request.form['descricao']
             numero = request.form['numero']
             setor_compra = request.form['setor_compra']
             n_estrado = request.form['n_estrado']
             tipo = request.form['tipo']
-            if not upc or not n_pedido or not numero or not fornecedor:
+            if not upc or not n_pedido or not numero or not fornecedor or not descricao or not numero or not setor_compra or not n_estrado or not tipo:
                 flash("Por favor preencha todos os campos")
-                return redirect(url_for('index'))
+                return redirect(url_for('pecas'))
             else:
                 cur = con.cursor()
                 cur.execute(
-                    "INSERT INTO PEÇA (upc, n_pedido, descricao, fornecedor, setor_compra, n_estrado, tipo) values (?, ?, ?, ?, ?, ?, ?)",
-                    [upc, n_pedido, fornecedor, numero, setor_compra, n_estrado, tipo])
+                    "INSERT INTO PEÇA (upc, n_pedido, descricao, fornecedor, numero, setor_compra, n_estrado, tipo) values (?, ?, ?, ?, ?, ?, ?, ?)",
+                    [upc, n_pedido, descricao, fornecedor, numero, setor_compra, n_estrado, tipo])
                 con.commit()
                 flash("Novo valor adicionado com sucesso!!")
                 return redirect(url_for('pecas'))
@@ -120,34 +125,39 @@ def add_pecas():
 
 
 @app.route('/delete', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def delete():
+    sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
             cur = con.cursor()
             cur.execute(
                 f"DELETE FROM RECEPTACULO WHERE tipe_peças='{request.form['tipo']}'")
             con.commit()
+            con.close()
             return redirect(url_for('index'))
     return render_template('delete.html')
 
 
 @app.route('/delete_pecas', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def delete_pecas():
+    sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
             cur = con.cursor()
             cur.execute(
                 f"DELETE FROM PEÇA WHERE upc='{request.form['upc']}'")
             con.commit()
+            con.close()
             return redirect(url_for('pecas'))
     return render_template('delete_peca.html')
 
 
 @app.route('/update', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def update():
+    sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
             tipo = request.form['tipo']
@@ -163,13 +173,42 @@ def update():
                     f"UPDATE RECEPTACULO set corredor = {corredor}, ordem={ordem}, quantidade_peças={qtd} WHERE tipe_peças='{tipo}'")
                 con.commit()
                 flash("Novo valor editado com sucesso!!")
+                con.close()
                 return redirect(url_for('index'))
 
     return render_template('update.html')
 
 
+@app.route('/update_pecas', methods=['GET', 'POST'])
+@login_required
+def update_pecas():
+    sqlite3.connect('sql/almoxarifado.db').close()
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            upc = request.form['upc']
+            n_pedido = request.form['n_pedido']
+            desc = request.form['descricao']
+            fornecedor = request.form['fornecedor']
+            numero = request.form['numero']
+            setor_compra = request.form['setor_compra']
+            n_estrado = request.form['n_estrado']
+            tipo = request.form['tipo']
+            if not tipo or not upc or not n_pedido or not desc or not fornecedor or not numero or not setor_compra or not n_estrado:
+                flash("Por favor preencha todos os campos")
+                return redirect(url_for('pecas'))
+            else:
+                cur = con.cursor()
+                cur.execute(
+                    f"UPDATE PEÇA set n_pedido={n_pedido}, descricao='{desc}', fornecedor='{fornecedor}', numero={numero}, setor_compra='{setor_compra}', n_estrado={n_estrado}, tipo='{tipo}'  WHERE upc={upc}")
+                con.commit()
+                return redirect(url_for('pecas'))
+
+    return render_template('update_pecas.html')
+
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
+    sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
             tipo = request.form['tipo']
@@ -205,6 +244,7 @@ def search():
 
 @app.route('/p_aninhada', methods=['GET', 'POST'])
 def pesquisa_aninhada():
+    sqlite3.connect('sql/almoxarifado.db').close()
     if request.method == 'POST':
         with sqlite3.connect('sql/almoxarifado.db') as con:
             qtd = request.form['qtd']
@@ -220,6 +260,7 @@ def pesquisa_aninhada():
 
 @app.route('/join')
 def pesquisa_join():
+    sqlite3.connect('sql/almoxarifado.db').close()
     with sqlite3.connect('sql/almoxarifado.db') as con:
         cur = con.cursor()
         x = cur.execute(
