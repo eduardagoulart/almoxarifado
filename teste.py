@@ -124,7 +124,6 @@ def search():
             corredor = request.form['corredor']
             ordem = request.form['ordem']
             qtd = request.form['qtd']
-            print('entra aqui')
             values = ""
             if tipo:
                 values += f"tipe_peças='{tipo}'"
@@ -150,6 +149,22 @@ def search():
             values = [dict(tipo=row[0], corredor=row[1], ordem=row[2], qtd=row[3]) for row in rows]
             return render_template('result_search.html', values=values)
     return render_template('search.html')
+
+
+@app.route('/p_aninhada', methods=['GET', 'POST'])
+def pesquisa_aninhada():
+    if request.method == 'POST':
+        with sqlite3.connect('sql/almoxarifado.db') as con:
+            qtd = request.form['qtd']
+            cur = con.cursor()
+            print(qtd, type(qtd))
+            e = int(qtd)
+            x = cur.execute(
+                f"SELECT DISTINCT descricao FROM PEÇA WHERE tipo = (SELECT tipe_peças FROM RECEPTACULO WHERE quantidade_peças > {e})")
+            rows = x.fetchall()
+            values = [dict(descricao=row[0]) for row in rows]
+        return render_template('result_aninhada.html', values=values)
+    return render_template('aninhada.html')
 
 
 @app.route('/pecas')
